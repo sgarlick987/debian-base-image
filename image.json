@@ -1,0 +1,36 @@
+{
+  "variables":{
+    "subnet_id": "",
+    "vpc_id": "",
+    "associate_public_ip": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "name": "debian",
+      "region": "us-east-1",
+      "source_ami": "ami-9d6c128a",
+      "associate_public_ip_address": "{{ user `associate_public_ip` }}",
+      "vpc_id": "{{ user `vpc_id` }}",
+      "subnet_id": "{{ user `subnet_id` }}",
+      "instance_type": "t2.micro",
+      "ssh_username": "admin",
+      "ami_name": "debian-base-gold {{ timestamp }}",
+      "tags": {
+        "OS": "debian",
+        "Version": "8"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "wait_for_cloudinit.sh",
+        "iptables.sh",
+        "install_user_packages.sh",
+        "install_kernel_packages.sh"
+      ]
+    }
+  ]
+}
